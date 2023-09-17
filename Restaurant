@@ -1,0 +1,103 @@
+class FoodItem:
+    def __init__(self, name, quantity, price, discount, stock):
+        self.name = name
+        self.quantity = quantity
+        self.price = price
+        self.discount = discount
+        self.stock = stock
+
+
+class Restaurant:
+    def __init__(self):
+        self.food_items = []
+
+    def add_food_item(self, name, quantity, price, discount, stock):
+        food_id = len(self.food_items) + 1
+        food_item = FoodItem(name, quantity, price, discount, stock)
+        self.food_items.append((food_id, food_item))
+
+    def view_food_items(self):
+        for food_id, food_item in self.food_items:
+            print(f"FoodID: {food_id}")
+            print(f"Name: {food_item.name}")
+            print(f"Quantity: {food_item.quantity}")
+            print(f"Price: {food_item.price}")
+            print(f"Discount: {food_item.discount}")
+            print(f"Stock: {food_item.stock}")
+            print()
+
+    def place_order(self, selected_items):
+        total_price = 0
+        for food_id, quantity in selected_items:
+            if 1 <= food_id <= len(self.food_items):
+                food_item = self.food_items[food_id - 1][1]
+                if quantity <= food_item.stock:
+                    total_price += (food_item.price - food_item.discount) * quantity
+                    food_item.stock -= quantity
+                    print(f"Ordered {quantity} {food_item.name}(s).")
+                else:
+                    print(f"Insufficient stock for {food_item.name}.")
+            else:
+                print(f"Invalid food item: {food_id}")
+
+        print(f"Total Price: {total_price}")
+
+
+restaurant = Restaurant()
+
+while True:
+    print("Welcome to the Restaurant")
+    print("1. Admin")
+    print("2. User")
+    print("3. Exit")
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        # Admin functionalities
+        admin_password = input("Enter admin password: ")
+        if admin_password == "adminpass":  # Replace with a secure authentication method
+            print("Admin Menu:")
+            print("1. Add Food Item")
+            print("2. View Food Items")
+            admin_choice = input("Enter your choice: ")
+            if admin_choice == "1":
+                name = input("Enter food item name: ")
+                quantity = input("Enter quantity: ")
+                price = float(input("Enter price: "))
+                discount = float(input("Enter discount: "))
+                stock = int(input("Enter stock quantity: "))
+                restaurant.add_food_item(name, quantity, price, discount, stock)
+                print("Food item added successfully.")
+            elif admin_choice == "2":
+                restaurant.view_food_items()
+            else:
+                print("Invalid choice.")
+        else:
+            print("Invalid password.")
+
+    elif choice == "2":
+        # User functionalities
+        print("User Menu:")
+        print("1. Place New Order")
+        print("2. Exit")
+        user_choice = input("Enter your choice: ")
+        if user_choice == "1":
+            restaurant.view_food_items()
+            selected_items = []
+            while True:
+                food_id = int(input("Enter the FoodID to order (0 to finish): "))
+                if food_id == 0:
+                    break
+                quantity = int(input(f"Enter quantity for FoodID {food_id}: "))
+                selected_items.append((food_id, quantity))
+            restaurant.place_order(selected_items)
+        elif user_choice == "2":
+            break
+        else:
+            print("Invalid choice.")
+
+    elif choice == "3":
+        break
+
+    else:
+        print("Invalid choice.")
